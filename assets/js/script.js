@@ -1,5 +1,6 @@
 // Assignment Code
 var generateBtn = document.querySelector("#generate");
+var passwordText = document.querySelector("#password");
 var criteriaDiv = document.querySelector("#criteriaDiv");
 var passLength = document.getElementsByName("passLength");
 var passCriteria = document.getElementsByName("passCriteria");
@@ -15,10 +16,20 @@ var splCharset = "@#$&_";
 var selectedCharset = "";
 var generatedString = "";
 
-// Show the Password Criteria block for user input
-function showCriteria() {
-  criteriaDiv.style.display = "block";
+function checkForPassword() { 
+  if (criteriaDiv.style.display !=="block" && passwordText.value.length === 0) {
+    criteriaDiv.style.display = "block";
+  }
+  else if (criteriaDiv.style.display ==="block" && passwordText.value.length === 0) {
+    writePassword();
+  }
+  else { 
+    console.log(12345);
+    clearTextarea();
+    writePassword();
+  }
 }
+
 
 // Get the Length of Password 
 function getPasswordLength() { 
@@ -40,19 +51,22 @@ function getPasswordCriteria() {
   return pCriteria;
 }
 
+// Function to generate the password
 function generatePassword() { 
-  pLen = parseInt(getPasswordLength());
-  //console.log("Selected Password Length==", pLen);
+  pLen = getPasswordLength();
+  console.log("Selected Password Length==", pLen);
   pCriteria = getPasswordCriteria();
-  //console.log("Selected Criteris==", pCriteria);
 
-  if (pLen === NaN) {
+
+  if (pLen == NaN || pLen == undefined) {
     window.alert("Please choose the password length");
   }
   else if (pCriteria.length === 0) {
     window.alert("Please choose the password criteria");
   }
   else { 
+    selectedCharset = "";
+    generatedString = "";
     for (i = 0; i < pCriteria.length; i++) { 
       if (pCriteria[i] === "uppercase") {
         selectedCharset = selectedCharset + upperCharset;
@@ -71,17 +85,13 @@ function generatePassword() {
     // This function generates the new length for the password, where MIN value is from user input and MAX value is fixed to 128
     var newLen = getRandomArbitrary(parseInt(getPasswordLength()), 128);
 
-  //  console.log("New length=="+newLen);
-  //  console.log(selectedCharset);
-  for (var i = 0; i < newLen; i++) { 
-    generatedString = generatedString + selectedCharset[Math.floor(Math.random() * selectedCharset.length)];
+    // This loop generates the string based on selected character string and length
+    for (var i = 0; i < newLen; i++) { 
+      generatedString = generatedString + selectedCharset[Math.floor(Math.random() * selectedCharset.length)];
+    }
   }
-  //console.log("Generated String=="+ generatedString);
-  }
-  
   return generatedString;
 }
-
 
 //This function is retrieved from MDN site - Refer READ.ME file
 function getRandomArbitrary(min, max) {
@@ -95,8 +105,9 @@ function writePassword() {
   passwordText.value = password;
 }
 
+function clearTextarea() { 
+  document.getElementById("password").value = "";
+}
 
-
-// Add event listener to generate button
-generateBtn.addEventListener("click", showCriteria);
-generateBtn.addEventListener("click", writePassword);
+// EventListener
+generateBtn.addEventListener("click", checkForPassword);
